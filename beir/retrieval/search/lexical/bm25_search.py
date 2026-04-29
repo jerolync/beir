@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 import time
 
 import tqdm
@@ -100,3 +101,11 @@ class BM25Search(BaseSearch):
             generate_actions=self.es.generate_actions(dictionary=dictionary, update=False),
             progress=progress,
         )
+    
+    @abstractmethod
+    def encode(self, text):
+        pass
+
+    @abstractmethod
+    def search_from_files(self, file_path):
+        pass
