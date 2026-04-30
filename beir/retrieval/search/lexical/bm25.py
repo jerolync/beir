@@ -3,12 +3,6 @@ from collections import Counter
 
 class BM25:
     def __init__(self, corpus, k1=1.2, b=0.75):
-        """
-        Initialize BM25 with a corpus.
-        :param corpus: List of documents, where each document is a list of terms.
-        :param k1: Term frequency saturation parameter.
-        :param b: Length normalization parameter.
-        """
         self.corpus = corpus
         self.k1 = k1
         self.b = b
@@ -18,9 +12,6 @@ class BM25:
         self.N = len(corpus)
 
     def _calculate_doc_freqs(self):
-        """
-        Calculate document frequencies for all terms in the corpus.
-        """
         doc_freqs = Counter()
         for doc in self.corpus:
             unique_terms = set(doc)
@@ -29,19 +20,10 @@ class BM25:
         return doc_freqs
 
     def idf(self, term):
-        """
-        Calculate the IDF for a term.
-        """
         n_t = self.doc_freqs.get(term, 0)
         return math.log((self.N - n_t + 0.5) / (n_t + 0.5) + 1)
 
     def score(self, query, doc):
-        """
-        Calculate the BM25 score for a query and a document.
-        :param query: List of query terms.
-        :param doc: List of document terms.
-        :return: BM25 score.
-        """
         score = 0
         doc_term_freqs = Counter(doc)
         for term in query:
@@ -53,12 +35,6 @@ class BM25:
         return score
 
     def search(self, queries, top_k=10):
-        """
-        Search the corpus for the top-k documents for each query.
-        :param queries: List of queries, where each query is a list of terms.
-        :param top_k: Number of top documents to return.
-        :return: List of top-k documents for each query.
-        """
         results = []
         for query in queries:
             scores = [(i, self.score(query, doc)) for i, doc in enumerate(self.corpus)]

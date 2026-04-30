@@ -1,14 +1,9 @@
+import math
+from collections import Counter
 from beir.retrieval.models.hyde import HyDE, OpenAIHypothesisGenerator, HyDEPromptBuilder
 
 class BM25WithHyDE:
     def __init__(self, corpus, hyde: HyDE, k1=1.2, b=0.75):
-        """
-        Initialize BM25 with HyDE query expansion.
-        :param corpus: List of documents, where each document is a list of terms.
-        :param hyde: HyDE instance for query expansion.
-        :param k1: Term frequency saturation parameter.
-        :param b: Length normalization parameter.
-        """
         self.corpus = corpus
         self.hyde = hyde
         self.k1 = k1
@@ -19,9 +14,6 @@ class BM25WithHyDE:
         self.N = len(corpus)
 
     def _calculate_doc_freqs(self):
-        """
-        Calculate document frequencies for all terms in the corpus.
-        """
         doc_freqs = Counter()
         for doc in self.corpus:
             unique_terms = set(doc)
@@ -30,19 +22,10 @@ class BM25WithHyDE:
         return doc_freqs
 
     def idf(self, term):
-        """
-        Calculate the IDF for a term.
-        """
         n_t = self.doc_freqs.get(term, 0)
         return math.log((self.N - n_t + 0.5) / (n_t + 0.5) + 1)
 
     def score(self, query, doc):
-        """
-        Calculate the BM25 score for a query and a document.
-        :param query: List of query terms.
-        :param doc: List of document terms.
-        :return: BM25 score.
-        """
         score = 0
         doc_term_freqs = Counter(doc)
         for term in query:
@@ -54,13 +37,6 @@ class BM25WithHyDE:
         return score
 
     def search(self, queries, top_k=10, expand=True):
-        """
-        Search the corpus for the top-k documents for each query.
-        :param queries: List of queries, where each query is a list of terms.
-        :param top_k: Number of top documents to return.
-        :param expand: Whether to use HyDE query expansion.
-        :return: List of top-k documents for each query.
-        """
         results = []
         for query in queries:
             if expand:
